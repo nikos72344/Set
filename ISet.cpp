@@ -15,11 +15,11 @@ ISet *ISet::createSet() {
 ISet* ISet::makeIntersection(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
@@ -46,12 +46,13 @@ ISet* ISet::makeIntersection(const ISet *const &op1, const ISet *const &op2, IVe
     RC code = RC::SUCCESS;
     while (true){
         code = biggerSet->findFirst(buffer, n, tol);
-        if(code == RC::VECTOR_NOT_FOUND)
-            if(newSet->remove(i) != RC::SUCCESS){
+        if(code == RC::VECTOR_NOT_FOUND) {
+            if (newSet->remove(i) != RC::SUCCESS) {
                 delete newSet;
                 delete buffer;
                 return nullptr;
             }
+        }
             else if(code!=RC::SUCCESS){
                 delete newSet;
                 delete buffer;
@@ -68,18 +69,18 @@ ISet* ISet::makeIntersection(const ISet *const &op1, const ISet *const &op2, IVe
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return newSet;
 }
 
 ISet* ISet::makeUnion(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
@@ -102,12 +103,13 @@ ISet* ISet::makeUnion(const ISet *const &op1, const ISet *const &op2, IVector::N
         delete newSet;
         return nullptr;
     }
-    if(newSet->insert(buffer, n, tol) != RC::SUCCESS){
+    RC code = newSet->insert(buffer, n, tol);
+    if(code != RC::SUCCESS && code != RC::VECTOR_ALREADY_EXIST){
         delete newSet;
         return nullptr;
     }
     for(size_t i = 1; i < smallerSet->getSize(); i++){
-        if(op1->getCoords(i, buffer) != RC::SUCCESS){
+        if(smallerSet->getCoords(i, buffer) != RC::SUCCESS){
             delete newSet;
             delete buffer;
             return nullptr;
@@ -117,18 +119,18 @@ ISet* ISet::makeUnion(const ISet *const &op1, const ISet *const &op2, IVector::N
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return newSet;
 }
 
 ISet* ISet::sub(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
@@ -167,18 +169,18 @@ ISet* ISet::sub(const ISet *const &op1, const ISet *const &op2, IVector::NORM n,
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return newSet;
 }
 
 ISet* ISet::symSub(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return nullptr;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return nullptr;
     }
 
@@ -202,7 +204,7 @@ ISet* ISet::symSub(const ISet *const &op1, const ISet *const &op2, IVector::NORM
                 delete buffer;
                 return nullptr;
             }
-        } else if(codeOne != RC::VECTOR_NOT_FOUND || codeTwo != RC::VECTOR_NOT_FOUND){
+        } else if(codeOne != RC::VECTOR_NOT_FOUND && codeTwo != RC::VECTOR_NOT_FOUND){
             delete newSet;
             delete buffer;
             return nullptr;
@@ -218,22 +220,22 @@ ISet* ISet::symSub(const ISet *const &op1, const ISet *const &op2, IVector::NORM
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return newSet;
 }
 
 bool ISet::equals(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return false;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return false;
     }
     if(op1->getSize() != op2->getSize()){
-        LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
         return false;
     }
 
@@ -241,54 +243,63 @@ bool ISet::equals(const ISet *const &op1, const ISet *const &op2, IVector::NORM 
     IVector* buffer = nullptr;
     if(op1->getCopy(0, buffer) != RC::SUCCESS)
         return false;
-    for(size_t i = 1; i <= op1->getSize(); i++){
+    size_t i = 1;
+    while (true){
         if(op2->findFirst(buffer, n, tol) == RC::SUCCESS)
             equalVecs++;
+        if(i == op1->getSize())
+            break;
         if(op1->getCoords(i, buffer) != RC::SUCCESS){
             delete buffer;
             return false;
         }
+        i++;
     }
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return equalVecs == op1->getSize();
 }
 
 bool ISet::subSet(const ISet *const &op1, const ISet *const &op2, IVector::NORM n, double tol) {
     ILogger* const LOGGER = SetImpl::getLogger();
     if(op1 == nullptr || op2 == nullptr){
-        LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::NULLPTR_ERROR, __FILE__, __func__, __LINE__);
         return false;
     }
     if(op1->getDim() != op2->getDim()){
-        LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->severe(RC::MISMATCHING_DIMENSIONS, __FILE__, __func__, __LINE__);
         return false;
     }
     if(op1->getSize() > op2->getSize()){
-        LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+        if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
         return false;
     }
 
     IVector* buffer = nullptr;
     if(op1->getCopy(0, buffer) != RC::SUCCESS)
         return false;
-    for(size_t i = 1; i <= op1->getSize(); i++){
+    size_t i = 1;
+    while (true){
         if(op2->findFirst(buffer, n, tol) != RC::SUCCESS){
-            LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+            if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
             delete buffer;
             return false;
         }
-        if(op1->getCoords(i, buffer) != RC::SUCCESS){
+        if(i == op1->getSize())
+            break;
+        RC code =op1->getCoords(i, buffer);
+        if(code != RC::SUCCESS && code != RC::VECTOR_NOT_FOUND){
             delete buffer;
             return false;
         }
+        i++;
     }
 
     delete buffer;
 
-    LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
+    if(LOGGER !=nullptr)LOGGER->info(RC::SUCCESS, __FILE__, __func__, __LINE__);
     return true;
 }
 
