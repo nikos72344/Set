@@ -157,6 +157,16 @@ int main() {
     ISet *set2 = set1->clone();
     if (!set2)
         cerr << "clone doesn't work properly " << __LINE__ << endl;
+    if(set1->getSize() != set2->getSize())
+        cerr << "copy doesn't work properly " << __LINE__ << endl;
+    for(size_t i = 0; i < set2->getSize(); i++){
+        IVector* v1 = nullptr;
+        set1->getCopy(i, v1);
+        IVector* v2 = nullptr;
+        set2->getCopy(i, v2);
+        if(!IVector::equals(v1, v2, IVector::NORM::CHEBYSHEV, tol))
+            cerr << "copy doesn't work properly " << __LINE__ << endl;
+    }
     double d[] = {1, 2};
     IVector *temp1 = IVector::createVector(2, d);
     code = set2->insert(temp1, IVector::NORM::FIRST, tol);

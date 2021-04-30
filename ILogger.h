@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RC.h"
+#include "Interfacedllexport.h"
 
 /*
 * Defines for comfortable logging with information about caller
@@ -13,7 +14,7 @@
 #define SendInfo(Logger, Code) Logger->info((Code), __FILE__, __func__, __LINE__)
 */
 
-class ILogger {
+class LIB_EXPORT ILogger {
 public:
     enum class Level {
         SEVERE,   // Critical error that prevents application from running further
@@ -37,11 +38,11 @@ public:
 
     /*
     * Logging is supposed to be implemented by receiving RC error code and writing corresponding string to output
-    * 
+    *
     * It means that you have to store pre-defined {RC: string} pairs in any way
-    * 
+    *
     * It's recommended to use std::map<RC, std::string> to call std::map::operator[] for easy string retrieval
-    * 
+    *
     * @param [in] code Error code
     *
     * @param [in] level Level of threat, that caused logging

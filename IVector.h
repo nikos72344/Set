@@ -4,6 +4,7 @@
 #include <functional>
 #include "RC.h"
 #include "ILogger.h"
+#include "Interfacedllexport.h"
 
 //size_t size = sizeof(Vector_Impl) + dim * sizeof(double)
 //uint8_t* pInstance = new(std::nothrow) uint8_t[size];
@@ -12,7 +13,7 @@
 //memcpy(pData, (uint8_t*)ptrData, dim * sizeof(double))
 //return new(pInstance) Vecotr_Impl(dim)
 
-class IVector {
+class LIB_EXPORT IVector {
 public:
     enum class NORM {
         CHEBYSHEV, // Renamed INFINITE, previous name was colliding with windows.h macros

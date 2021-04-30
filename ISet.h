@@ -4,7 +4,7 @@
 #include "RC.h"
 #include "Interfacedllexport.h"
 
-class LIB_EXPORT ISet {
+class ISet {
 public:
     static RC setLogger(ILogger* const logger);
 
