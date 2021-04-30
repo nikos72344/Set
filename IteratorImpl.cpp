@@ -2,7 +2,7 @@
 // Created by mikita on 24.04.2021.
 //
 
-#include "IteratorImpl.h"
+#include "../include/IteratorImpl.h"
 
 ILogger* IteratorImpl::LOGGER = nullptr;
 
@@ -28,6 +28,8 @@ ISet::IIterator* IteratorImpl::createIterator(std::shared_ptr<ISetControlBlock> 
     size_t hash = 0;
     RC code = controlBlock->getNext(buffer, hash, index);
     if(code != RC::SUCCESS){
+///IAA: memory leaks!
+        delete buffer;  //<- исправил
         if(LOGGER !=nullptr)LOGGER->severe(code, __FILE__, __func__, __LINE__);
         return nullptr;
     }

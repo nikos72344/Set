@@ -3,7 +3,6 @@
 //
 
 #include "SetControlBlockImpl.h"
-#include "iostream"
 
 ILogger *SetControlBlockImpl::LOGGER = nullptr;
 
@@ -35,15 +34,17 @@ RC SetControlBlockImpl::updateData(double *data, size_t *indices, size_t dim, si
 }
 
 size_t SetControlBlockImpl::getIndex(size_t hash) const {
-    size_t s = indices[hash] > hash ? -1 : 1;
-    //std::cout << "{ " << indices[hash] << "}\n";
+///IAA: size_t s = -1 ???
     size_t index = hash;
     while (true) {
         if (indices[index] == hash)
             break;
         if (index == size || index == 0)
             return SIZE_MAX;
-        index += s;
+        if(indices[hash] > hash)    //<- исправил
+            index--;
+        else
+            index++;
     }
     return index;
 }
